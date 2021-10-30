@@ -14,7 +14,7 @@ app.use(express.json());
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.jgbqt.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
-console.log(uri);
+//console.log(uri);
 
 async function run(){
 
@@ -22,31 +22,27 @@ async function run(){
        await client.connect();
       // console.log('database succesfully port run');
 
-      const database = client.db('travelTour');
+      const database = client.db('travel');
       const servicesCollection =database.collection('services');
-
-      //POST API
-      app.post('/services', async(req,res)=>{
-         const service ={
-            "name":"California",
-         "title": "United State of America",
-        "description":"California, a western U.S. state, stretches from the Mexican border along the Pacific for nearly 900 miles. Its terrain includes cliff-lined beaches" ,
-       "image": "https://i.ibb.co/txsF10b/pexels-archie-binamira-672358.jpg" ,
-       "cost":"1000",
-       "rating": "5",
-       "day": "9" 
-
-         }
-         const result = await servicesCollection.insertOne(service);
-         console.log(result);
-        
-
+      
+      //GET API
+      app.get('/services', async (req ,res)=> {
+         const cursor = servicesCollection.find({});
+         const  services = await cursor.toArray();
+         res.send(services);
       })
+ 
+      //POST API
+      app.post('/services', async(req, res)=>{
+          const service = req.body;
+          const result = await servicesCollection.insertOne(service);
+          res.json(result)
+      });
 
 
     }
     finally{
-
+      //await client.close();
     }
 
 }
