@@ -3,7 +3,7 @@ const { MongoClient } = require('mongodb');
 require('dotenv').config()
 const cors = require('cors')
 const app = express();
-const port =process.env.PORT || 5000;
+const port =process.env.PORT || 7000;
 
 
 //middlewwar
@@ -38,7 +38,14 @@ async function run(){
           const result = await servicesCollection.insertOne(service);
           res.json(result)
       });
-
+    
+      // Delete api 
+      app.delete('/services: id', async(req, res) =>{
+          const id =  req.params.id;
+          const query ={_id:ObjectId(id)};
+          const result = await servicesCollection.deleteOne(query);
+          res.json(result);
+      })
 
     }
     finally{
@@ -46,13 +53,7 @@ async function run(){
     }
 
 }
-
-
 run().catch(console.dir);
-
-
-
-
 
 app.get('/', (req, res)=>{
     res.send('travel server is in running')
@@ -62,9 +63,3 @@ app.listen(port,()=>{
     console.log('Server running at port');
 
 })
-
-/* 
- name travel
-
- passs 5xbHVAsV75oLGkTr
-*/
